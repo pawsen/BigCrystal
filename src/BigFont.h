@@ -3,6 +3,11 @@
 
 #include <Arduino.h>
 
+#ifdef CORE_ESP8266_FEATURES_H
+//  #warning Building for ESP8266
+  #include <pgmspace.h>
+#endif
+
 //************************************************************************
 //*	A set of custom made large numbers for a 16x2 LCD using the
 //*	LiquidCrystal librabry. Works with displays compatible with the

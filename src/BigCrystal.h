@@ -10,13 +10,23 @@
   #include <WProgram.h>
 #endif
 
-#include <LiquidCrystal.h>
-#ifndef LiquidCrystal_h // Using the new LiquidCrystal library
-  #ifdef LiquidCrystal_4bit_h || LiquidCrystal_I2C_h || _LIQUIDCRYSTAL_SR_ || _LIQUIDCRYSTAL_SR2W_ || _LIQUIDCRYSTAL_SR3W_H_ // Using the New LiquidCrystal library
-    #include "LCD.h"
-  #else
-    #error You must install New LiquidCrystal library to work with non-4bit projects: http:/bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+#ifndef FDB_LIQUID_CRYSTAL_I2C_H
+  #include <LiquidCrystal.h>
+  #ifndef LiquidCrystal_h // Using the new LiquidCrystal library
+    #ifdef LiquidCrystal_4bit_h || LiquidCrystal_I2C_h || _LIQUIDCRYSTAL_SR_ || _LIQUIDCRYSTAL_SR2W_ || _LIQUIDCRYSTAL_SR3W_H_ // Using the New LiquidCrystal library
+      #include "LCD.h"
+    #else
+      #error You must install New LiquidCrystal library to work with non-4bit projects: http:/bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+    #endif
   #endif
+#else
+  //#warning including I2C
+  #include <LiquidCrystal_I2C.h>
+#endif	
+
+#ifdef CORE_ESP8266_FEATURES_H
+  #include <Arduino.h>
+  #include <pgmspace.h>
 #endif
 
 
@@ -29,10 +39,18 @@ public:
    * Parameters:
    *       lcd: A LiquidCrystal or LCD instance.
    */
-#ifndef LiquidCrystal_h // New liquid crystal library
-  BigCrystal(LCD *display);
+#ifndef FDB_LIQUID_CRYSTAL_I2C_H
+  #ifndef LiquidCrystal_h // New liquid crystal library
+  #warning Should not be here
+    BigCrystal(LCD *display);
+  #else
+  #warning Should not be here either
+    BigCrystal(LiquidCrystal *display);
+	//BigCrystal(LiquidCrystal_I2C *display);
+  #endif
 #else
-  BigCrystal(LiquidCrystal *display);
+  #warning Header File for FDB_LIQUID_CRYSTAL_I2C_H
+  BigCrystal(LiquidCrystal_I2C *display);
 #endif
   BigCrystal(uint8_t rs, uint8_t enable,
 		uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
@@ -74,12 +92,16 @@ public:
   uint8_t printBig(char *str, uint8_t col, uint8_t row);
 
   /* Delegate methods to underlying LCD instance */
+  #ifndef FDB_LIQUID_CRYSTAL_I2C_H
   inline void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS) {
     _display->begin(cols, rows, charsize);
     #ifndef LiquidCrystal_h 
     createCustomChars();
     #endif
   }
+  #else
+  inline void begin() { _display->begin(); }
+  #endif
   inline void clear() { _display->clear(); }
   inline void home() { _display->home(); }
   inline void noDisplay() { _display->noDisplay(); }
@@ -107,10 +129,14 @@ private:
   void clearColumn(uint8_t row, uint8_t col);
   char toUpperCase(char c);
   bool supported(char c);
-#ifndef LiquidCrystal_h // Using New LquidCrystal library
-  LCD *_display;
+#ifdef FDB_LIQUID_CRYSTAL_I2C_H
+  LiquidCrystal_I2C *_display;
 #else
-  LiquidCrystal *_display;
+  #ifndef LiquidCrystal_h // Using New LquidCrystal library
+    LCD *_display;
+  #else
+    LiquidCrystal *_display;
+  #endif
 #endif
 
 };
