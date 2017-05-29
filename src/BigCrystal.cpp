@@ -1,7 +1,7 @@
 #include "BigFont.h"
 #include "BigCrystal.h"
 
-#ifndef FDB_LIQUID_CRYSTAL_I2C_H
+#ifndef USE_I2C
   #ifndef LiquidCrystal_h // New liquid crystal library
     BigCrystal::BigCrystal(LCD *display) {
   #else                   // Standard library

@@ -10,7 +10,8 @@
   #include <WProgram.h>
 #endif
 
-#ifndef FDB_LIQUID_CRYSTAL_I2C_H
+#ifndef USE_I2C
+  #warning 2. Durchlauf so wie es aussieht
   #include <LiquidCrystal.h>
   #ifndef LiquidCrystal_h // Using the new LiquidCrystal library
     #ifdef LiquidCrystal_4bit_h || LiquidCrystal_I2C_h || _LIQUIDCRYSTAL_SR_ || _LIQUIDCRYSTAL_SR2W_ || _LIQUIDCRYSTAL_SR3W_H_ // Using the New LiquidCrystal library
@@ -39,7 +40,7 @@ public:
    * Parameters:
    *       lcd: A LiquidCrystal or LCD instance.
    */
-#ifndef FDB_LIQUID_CRYSTAL_I2C_H
+#ifndef USE_I2C
   #ifndef LiquidCrystal_h // New liquid crystal library
   #warning Should not be here
     BigCrystal(LCD *display);
@@ -92,7 +93,7 @@ public:
   uint8_t printBig(char *str, uint8_t col, uint8_t row);
 
   /* Delegate methods to underlying LCD instance */
-  #ifndef FDB_LIQUID_CRYSTAL_I2C_H
+  #ifndef USE_I2C
   inline void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS) {
     _display->begin(cols, rows, charsize);
     #ifndef LiquidCrystal_h 
@@ -129,7 +130,7 @@ private:
   void clearColumn(uint8_t row, uint8_t col);
   char toUpperCase(char c);
   bool supported(char c);
-#ifdef FDB_LIQUID_CRYSTAL_I2C_H
+#ifdef USE_I2C
   LiquidCrystal_I2C *_display;
 #else
   #ifndef LiquidCrystal_h // Using New LquidCrystal library
