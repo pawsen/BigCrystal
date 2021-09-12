@@ -101,7 +101,10 @@ public:
     #endif
   }
   #else
-  inline void begin() { _display->begin(); }
+  inline void init() {
+    _display->init();
+    createCustomChars();
+  }
   #endif
   inline void clear() { _display->clear(); }
   inline void home() { _display->home(); }
